@@ -22,6 +22,12 @@ def translate_file(path):
     ensure_dir_exists(build_path)
     return build_path
 
+def set_build_dir(new_dir):
+    global build_dir
+    build_dir = new_dir
+
+def get_build_dir():
+    return build_dir
 
 
 

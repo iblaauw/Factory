@@ -11,7 +11,7 @@ startpoints = set() # The set of files that already exist before building happen
 
 default_target = None # The default target to build, if none is specified
 
-BuildContext = namedtuple('BuildContext', 'target dependents context_dict')
+BuildContext = namedtuple('BuildContext', 'target dependencies context_dict')
 
 def Execute(args=None):
     action = Build
@@ -75,11 +75,17 @@ def _doBuild(target):
     rule, data = _findRule(target)
     depends = rule.dependencies.expand(data)
 
-    for dep in depends:
+    context = BuildContext(target, depends, rule.context_dict)
+
+    if rule.func is not None:
+        if rule.modifies_dependencies:
+            rule.func(context)
+
+    for dep in context.dependencies:
         _doBuild(dep)
 
-    real_target = translate_file(target)
-    real_deps = (translate_file(dep) for dep in depends)
+    real_target = translate_file(context.target)
+    real_deps = (translate_file(dep) for dep in context.dependencies)
 
     mtime = modify_time(real_target)
 
@@ -88,10 +94,12 @@ def _doBuild(target):
         build_needed = any(modify_time(dep) > mtime for dep in real_deps)
 
     if build_needed:
-        context = BuildContext(target, depends, rule.context_dict)
         # execute
-        rule.func(context)
-        # TODO: dynamically determine what to pass based on number of parameters to 'rule.func'
+        if rule.func is not None:
+            if not rule.modifies_dependencies: # Already been called in that case
+                rule.func(context)
+                # TODO: dynamically determine what to pass based on number of parameters to 'rule.func'
+
         if rule.action is not None:
             rule.action.execute(context)
 
@@ -118,7 +126,14 @@ def _doClean(target):
 
     rule, data = _findRule(target)
     depends = rule.dependencies.expand(data)
-    for dep in depends:
+
+    context = BuildContext(target, depends, rule.context_dict)
+
+    if rule.func is not None:
+        if rule.modifies_dependencies:
+            rule.func(context)
+
+    for dep in context.dependencies:
         _doClean(dep)
 
     real = translate_file(target)

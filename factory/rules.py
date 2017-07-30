@@ -7,17 +7,42 @@ ruleset = []
 
 def rule(func):
     parent_dict = get_caller_dict()
-    newrule = parse_rule(func, parent_dict, False)
-    if newrule is not None:
-        ruleset.append(newrule)
+    doc = func.__doc__
+    return _rule_entry(func, doc, parent_dict, False, False)
+    #newrule = parse_rule(func, doc, parent_dict, False)
+    #if newrule is not None:
+    #    ruleset.append(newrule)
+    #    return newrule
 
-    return func
+    #return func
 
 def regex_rule(func):
     parent_dict = get_caller_dict()
-    newrule = parse_rule(func, parent_dict, True)
+    doc = func.__doc__
+    return _rule_entry(func, doc, parent_dict, True, False)
+    #newrule = parse_rule(func, doc, parent_dict, True)
+    #if newrule is not None:
+    #    ruleset.append(newrule)
+    #    return newrule
+
+    #return func
+
+def add_rule(rulestr, func=None, modifies_dependencies=False):
+    parent_dict = get_caller_dict()
+    return _rule_entry(func, rulestr, parent_dict, False, modifies_dependencies)
+
+def add_regex_rule(rulestr, func=None, modifies_dependencies=False):
+    parent_dict = get_caller_dict()
+    return _rule_entry(func, rulestr, parent_dict, True, modifies_dependencies)
+
+# Helper function that starts off the rule parsing process and adds the rule to the set
+def _rule_entry(func, doc, parent_dict, isregex, modify_depend):
+    newrule = parse_rule(func, doc, parent_dict, isregex)
     if newrule is not None:
         ruleset.append(newrule)
+        if modify_depend:
+            newrule.modifies_dependencies = True
+        return newrule
 
     return func
 
@@ -28,6 +53,7 @@ class Rule(object):
         self.target = target
         self.dependencies = dependencies
         self.action = action
+        self.modifies_dependencies = False
 
     def __str__(self):
         val = "Rule {}:\n".format(self.func.__name__)
@@ -37,15 +63,18 @@ class Rule(object):
         val += tabbed.format(self.action)
         return val
 
-def parse_rule(func, parent_dict, isregex):
-    doc = func.__doc__
+    def __call__(self, *args):
+        self.func(*args)
+
+
+def parse_rule(func, doc, parent_dict, isregex):
     if doc is None:
         return Rule(func, parent_dict, None, None, None)
 
     lines = doc.splitlines()
     lines = [ l for l in lines if len(l) > 0 ]
     if len(lines) == 0:
-        return Rule(func, None, None, None)
+        return Rule(func, parent_dict, None, None, None)
 
     line1 = lines[0].strip()
     target_depend = line1.split(':')

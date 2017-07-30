@@ -29,11 +29,11 @@ class Action(object):
         if var == '@':
             return [ translate_file(context.target) ]
         if var == '^':
-            return [ translate_file(dep) for dep in context.dependents ]
+            return [ translate_file(dep) for dep in context.dependencies ]
         if var == '<':
-            if len(context.dependents) == 0:
+            if len(context.dependencies) == 0:
                 raise Exception("Error: '$<' is not defined when no dependencies exist")
-            return [ translate_file(context.dependents[0]) ]
+            return [ translate_file(context.dependencies[0]) ]
         if var[0] == '[' and var[-1] == ']': # return as array
             subvar = var[1:-1]
             if subvar in context.context_dict:
