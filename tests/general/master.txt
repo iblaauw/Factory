@@ -1,0 +1,6 @@
+g++ -c test.cpp -o build/test.o
+g++ build/test.o -o program
+Success!
+rm build/test.o
+rm program
+Success!
