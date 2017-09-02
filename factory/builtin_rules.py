@@ -23,6 +23,7 @@ def AddOToExeRule(target=None):
     def capture_o_files(context):
         cpp_files = [ f[:-4] for f in main.startpoints if f.endswith(".cpp") ]
         o_files = [ f + ".o" for f in cpp_files ]
+        o_files.sort()
         context.dependencies.extend(o_files)
 
     rules.add_rule(rulestr, func=capture_o_files, modifies_dependencies=True)
