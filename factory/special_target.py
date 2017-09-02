@@ -13,3 +13,6 @@ def special_target(name):
         return func
     return decorator
 
+def ResetSpecial():
+    special_target_dict.clear()
+

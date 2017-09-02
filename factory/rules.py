@@ -195,3 +195,6 @@ def parse_action(line):
         return None
     return Action(line)
 
+def ResetRules():
+    ruleset.clear()
+

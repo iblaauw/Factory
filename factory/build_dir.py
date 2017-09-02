@@ -29,6 +29,10 @@ def set_build_dir(new_dir):
 def get_build_dir():
     return build_dir
 
+def ResetFiles():
+    known_files.clear()
+    global build_dir
+    set_build_dir("build")
 
 
 

@@ -109,7 +109,7 @@ def Test(name, path, context):
         context.fatal_except(name)
 
 def DoTest(name, to_run, master, output, context):
-    importlib.reload(factory)
+    reload_factory()
     module = import_file_from_path(to_run)
     module.factory = factory
     module.test_utils = TestUtils()
@@ -139,6 +139,16 @@ def import_file_from_path(path_obj):
     module = spec.loader.load_module()
     return module
 
+def reload_factory():
+    factory.Reset()
+    #import factory.build_dir as build_dir_mod
+    #import factory.special_target as special_target_mod
+    #global factory
+    #importlib.reload(build_dir_mod)
+    #importlib.reload(special_target_mod)
+    #importlib.reload(factory.rules)
+    #factory = importlib.reload(factory)
+
 @contextlib.contextmanager
 def push_cd(path):
     if not isinstance(path, str):
@@ -164,6 +174,7 @@ def main():
 
         name = entry.name
         Test(name, entry, context)
+        print()
     context.print_stats()
 
 

@@ -1,10 +1,10 @@
 import os
 import sys
 from collections import namedtuple
-from .rules import ruleset
+from .rules import ruleset, ResetRules
 from .utils import modify_time
-from .build_dir import known_files, translate_file
-from .special_target import special_target_dict
+from .build_dir import known_files, translate_file, ResetFiles
+from .special_target import special_target_dict, ResetSpecial
 
 startpoints = set() # The set of files that already exist before building happens
                     # These will not be removed on clean, and will stop any rule matching recursion
@@ -141,4 +141,13 @@ def _doClean(target):
         print("rm {}".format(real))
         os.remove(real)
 
+def Reset():
+    ResetRules()
+    ResetFiles()
+    ResetSpecial()
+
+    startpoints.clear()
+
+    global default_target
+    default_target = None
 

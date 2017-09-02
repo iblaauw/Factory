@@ -17,7 +17,7 @@ def AddOToExeRule(target=None):
     if target is None:
         target = main.default_target
     if target is None:
-        raise Exception("Error: no target specified and no default target could be found")
+        raise Exception("Error: no target specified for builtin rule and no default target could be found")
 
     rulestr = "{}: \n $CXX $[LDFLAGS] $^ -o $@".format(target)
     def capture_o_files(context):
