@@ -224,11 +224,14 @@ class WorkingString(object):
 
     def copy(self):
         duplicate = WorkingString('')
-        self.full_line   = self.full_line
-        self.line        = self.line
-        self.result      = self.result
-        self.index       = self.index
+        duplicate.full_line   = self.full_line
+        duplicate.line        = self.line
+        duplicate.result      = self.result
+        duplicate.index       = self.index
         return duplicate
+
+    def __str__(self):
+        return "{} >|> {}".format(self.result, self.line)
 
 class _VarParser(object):
     _SpecialChars = [ '@', '^', '<', '$' ]
