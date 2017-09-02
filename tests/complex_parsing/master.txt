@@ -1,0 +1,11 @@
+echo thing1=text thing2=a.dummy
+echo thing1=yes thing1=no thing1=maybe thing2=a.dummy thing2=b.dummy thing2=c.dummy
+echo text=yes a.dummy=no
+echo yes=yes no=yes maybe=yes a.dummy=no b.dummy=no c.dummy=no
+echo nothing ->
+echo textconcat
+echo textyes textno textmaybe
+echo yestext notext maybetext
+echo yesred yesgreen yesblue nored nogreen noblue maybered maybegreen maybeblue
+echo text=yes-concat>red text=yes-concat>green text=yes-concat>blue text=no-concat>red text=no-concat>green text=no-concat>blue text=maybe-concat>red text=maybe-concat>green text=maybe-concat>blue
+Success!

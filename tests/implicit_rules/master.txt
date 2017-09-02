@@ -1,0 +1,8 @@
+g++ -Wall -std=c++11 -Iinclude -c test.cpp -o build/test.o
+g++ -Wall -std=c++11 -Iinclude -c test2.cpp -o build/test2.o
+g++ build/test.o build/test2.o -o program
+Success!
+rm build/test.o
+rm build/test2.o
+rm program
+Success!

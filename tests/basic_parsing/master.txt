@@ -1,0 +1,5 @@
+echo longset a.dummy a.dummy b.dummy c.dummy
+echo This is custom text
+echo This is more custom text
+echo Custom Stuff In A List
+Success!
