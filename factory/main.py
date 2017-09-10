@@ -5,6 +5,7 @@ from .rules import ruleset, ResetRules
 from .utils import modify_time
 from .build_dir import known_files, translate_file, ResetFiles
 from .special_target import special_target_dict, ResetSpecial
+from pathlib import Path
 
 startpoints = set() # The set of files that already exist before building happens
                     # These will not be removed on clean, and will stop any rule matching recursion
@@ -43,14 +44,17 @@ def Add(startpoint):
     known_files.add(startpoint)
 
 def AddDir(directory, recurse=False):
-    files = (f for f in os.listdir(directory) if os.isfile(f))
+    path = Path(directory)
+    if not path.exists():
+        raise Exception("Directory {} does not exist".format(directory))
+    files = (f for f in path.iterdir() if f.is_file())
     for f in files:
-        Add(f)
+        Add(str(f))
 
     if recurse:
-        dirs = (d for d in os.listdir(directory) if os.isdir(d))
+        dirs = (d for d in path.iterdir() if d.is_dir())
         for d in dirs:
-            AddDir(d)
+            AddDir(str(d))
 
 def AddTarget(target):
     known_files.add(target)

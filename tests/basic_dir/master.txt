@@ -1,0 +1,8 @@
+g++ -c src/test.cpp -o build/src/test.o
+g++ -c src/test2.cpp -o build/src/test2.o
+g++ build/src/test.o build/src/test2.o -o program
+Success!
+rm build/src/test.o
+rm build/src/test2.o
+rm program
+Success!
