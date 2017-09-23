@@ -47,13 +47,23 @@ def _rule_entry(func, doc, parent_dict, isregex, modify_depend):
     return func
 
 class Rule(object):
-    def __init__(self, func, context_dict, target, dependencies, action):
+    def __init__(self, func, context_dict, target, dependencies, action_list):
         self.func = func
         self.context_dict = context_dict
         self.target = target
         self.dependencies = dependencies
-        self.action = action
+        self.action_list = action_list
         self.modifies_dependencies = False
+
+    def execute(self, context):
+        if self.action_list is None:
+            return
+
+        if len(self.action_list) == 0:
+            return
+
+        for action in self.action_list:
+            action.execute(context)
 
     def __str__(self):
         val = "Rule {}:\n".format(self.func.__name__)
@@ -98,11 +108,15 @@ def parse_rule(func, doc, parent_dict, isregex):
     if len(lines) == 1:
         return Rule(func, parent_dict, target, depends, None)
 
-    action_line = lines[1].strip()
-    action = parse_action(action_line)
-    if action is None:
+    action_list = []
+    for action_line in lines[1:]:
+        action_line = action_line.strip()
+        action = parse_action(action_line)
+        if action is not None:
+            action_list.append(action)
+    if len(action_list) == 0:
         return Rule(func, parent_dict, target, depends, None)
-    return Rule(func, parent_dict, target, depends, action)
+    return Rule(func, parent_dict, target, depends, action_list)
 
 
 def do_escape_target(val):

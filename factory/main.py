@@ -104,9 +104,7 @@ def _doBuild(target):
                 rule.func(context)
                 # TODO: dynamically determine what to pass based on number of parameters to 'rule.func'
 
-        if rule.action is not None:
-            rule.action.execute(context)
-
+        rule.execute(context)
 
 def _findRule(name):
     data = None
